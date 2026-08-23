@@ -11,6 +11,8 @@ import uvicorn
 BASE_URL = os.getenv("LLAMA_STACK_BASE_URL", "http://localhost:8321/v1")
 API_KEY = os.getenv("LLAMA_STACK_API_KEY", "fake")
 TIMEOUT_SECONDS = float(os.getenv("LLAMA_STACK_TIMEOUT_SECONDS", "60"))
+PORT = int(os.getenv("PORT", "8001"))
+RELOAD = os.getenv("UVICORN_RELOAD", "false").lower() in {"1", "true", "yes", "on"}
 
 app = FastAPI(title="Llama Stack API", version="1.0.0")
 
@@ -157,4 +159,4 @@ async def get_weather_info(payload: WeatherRequest) -> WeatherResponse:
         raise HTTPException(status_code=502, detail=f"Weather request failed: {exc}") from exc
     
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8001, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=PORT, reload=RELOAD)

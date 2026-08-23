@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    container_name: llama-rag-mcp
+    ports:
+      - "8001:8001"
+    environment:
+      PORT: 8001
+      LLAMA_STACK_BASE_URL: ${LLAMA_STACK_BASE_URL:-http://host.docker.internal:8321/v1}
+      LLAMA_STACK_API_KEY: ${LLAMA_STACK_API_KEY:-fake}
+      LLAMA_STACK_TIMEOUT_SECONDS: ${LLAMA_STACK_TIMEOUT_SECONDS:-60}
+      UVICORN_RELOAD: ${UVICORN_RELOAD:-false}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -30,3 +30,8 @@ docker run -d \
 python3 -m pip install --upgrade openai
 
 python3 -m uvicorn app:app --host 0.0.0.0 --port 8001
+
+docker run \
+  -p 8002:8001 \
+  -e LLAMA_STACK_BASE_URL=http://host.docker.internal:8321/v1 \
+  llama-rag-mcp:latest
