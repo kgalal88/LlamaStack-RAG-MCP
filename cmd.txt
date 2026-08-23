@@ -1,6 +1,6 @@
 docker run --rm --gpus all nvidia/cuda:12.1.0-base-ubuntu22.04 nvidia-smi
 
-export HF_TOKEN="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"
+export HF_TOKEN="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"
 
 docker run --rm \
     --name vllm-qwen3-4B \
@@ -19,6 +19,7 @@ docker run --rm \
     --enforce-eager \
     --enable-auto-tool-choice \
     --tool-call-parser hermes
+
     
 docker run -d \
   -p 8321:8321 \
@@ -27,5 +28,6 @@ docker run -d \
   -e VLLM_URL=http://host.docker.internal:8000/v1 \
   ogxai/distribution-starter
 
+python3 -m pip install --upgrade openai
 
 python3 -m uvicorn app:app --host 0.0.0.0 --port 8001

@@ -10,10 +10,12 @@ file = client.files.create(
 )
 
 # Create a vector store and index the file
-vector_store = client.beta.vector_stores.create(
+vector_store = client.vector_stores.create(
     name="my-docs",
     file_ids=[file.id],
 )
+
+print(f"Vector Store ID: {vector_store.id}")
 
 # # Ask questions with file search
 # response = client.responses.create(
