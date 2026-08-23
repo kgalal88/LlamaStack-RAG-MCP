@@ -1,3 +1,4 @@
+import json
 import os
 from typing import List, Optional
 
@@ -22,6 +23,18 @@ http_client = httpx.Client(
 client = OpenAI(base_url=BASE_URL, api_key=API_KEY, http_client=http_client)
 
 
+# --- Mock Weather Function ---
+def mock_get_weather(location: str) -> str:
+    mock_data = {
+        "Riyadh": {"temperature": "45°C", "condition": "Sunny"},
+        "Tokyo": {"temperature": "22°C", "condition": "Rainy"},
+        "London": {"temperature": "15°C", "condition": "Cloudy"},
+    }
+    data = mock_data.get(location, {"temperature": "70°F", "condition": "Clear"})
+    return json.dumps({"location": location, **data})
+
+
+# --- Pydantic Schemas ---
 class AskRequest(BaseModel):
     prompt: str = Field(..., min_length=1, description="Text prompt to send to the model")
     model: str = Field(default="vllm/Qwen/Qwen3-4B", description="Model ID to invoke")
@@ -36,6 +49,17 @@ class AskResponse(BaseModel):
     response: str
 
 
+class WeatherRequest(BaseModel):
+    prompt: str = Field(..., min_length=1, description="Text prompt to send to the model")
+    model: str = Field(default="vllm/Qwen/Qwen3-4B", description="Model ID to invoke")
+
+
+class WeatherResponse(BaseModel):
+    model: str
+    response: str
+
+
+# --- Endpoints ---
 @app.get("/health")
 async def health() -> dict:
     return {"status": "ok", "base_url": BASE_URL}
@@ -70,5 +94,67 @@ async def ask_question(payload: AskRequest) -> AskResponse:
         raise HTTPException(status_code=502, detail=f"Model request failed: {exc}") from exc
 
 
+@app.post("/ask_weather", response_model=WeatherResponse)
+async def get_weather_info(payload: WeatherRequest) -> WeatherResponse:
+    tools = [{
+        "type": "function",
+        "name": "get_weather",
+        "description": "Get the current weather for a location",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "location": {"type": "string", "description": "City name"},
+            },
+            "required": ["location"],
+        },
+    }]
+
+    try:
+        # Step 1: Request tool execution from model
+        initial_response = client.responses.create(
+            model=payload.model,
+            input=payload.prompt,
+            tools=tools,
+        )
+
+        # Step 2: Extract function call outputs
+        function_outputs = []
+        for item in getattr(initial_response, "output", []):
+            if item.type == "function_call":
+                args = json.loads(item.arguments)
+                location = args.get("location", "")
+                tool_result = mock_get_weather(location)
+
+                function_outputs.append({
+                    "type": "function_call_output",
+                    "call_id": item.call_id,
+                    "output": tool_result,
+                })
+
+        # Step 3: Pass FULL conversation history back to the model
+        if function_outputs:
+            conversation_input = [
+                {"role": "user", "content": payload.prompt},
+            ]
+            
+            # Append output items from the initial response
+            for item in getattr(initial_response, "output", []):
+                conversation_input.append(item)
+                
+            # Append function execution results
+            conversation_input.extend(function_outputs)
+
+            final_response = client.responses.create(
+                model=payload.model,
+                input=conversation_input,
+                tools=tools,
+            )
+            return WeatherResponse(model=payload.model, response=final_response.output_text)
+
+        return WeatherResponse(model=payload.model, response=initial_response.output_text)
+
+    except Exception as exc:  # pragma: no cover
+        raise HTTPException(status_code=502, detail=f"Weather request failed: {exc}") from exc
+    
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8001, reload=True)
