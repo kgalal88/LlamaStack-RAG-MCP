@@ -1,0 +1,28 @@
+docker run --rm --gpus all nvidia/cuda:12.1.0-base-ubuntu22.04 nvidia-smi
+
+export HF_TOKEN="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"
+
+docker run --rm \
+    --name vllm-qwen3-4B \
+    --gpus all \
+    -p 8000:8000 \
+    -v ~/.cache/huggingface2:/root/.cache/huggingface \
+    -e HF_TOKEN=$HF_TOKEN \
+    -e VLLM_USE_V2_MODEL_RUNNER=0 \
+    --ipc=host \
+    vllm/vllm-openai:latest \
+    Qwen/Qwen3-4B \
+    --quantization bitsandbytes \
+    --load-format bitsandbytes \
+    --gpu-memory-utilization 0.80 \
+    --max-model-len 8192 \
+    --enforce-eager \
+    --enable-auto-tool-choice \
+    --tool-call-parser hermes
+    
+docker run -d \
+  -p 8321:8321 \
+  -v ~/.ogx:/root/.ogx \
+  -e INFERENCE_PROVIDER=vllm \
+  -e VLLM_URL=http://host.docker.internal:8000/v1 \
+  ogxai/distribution-starter
