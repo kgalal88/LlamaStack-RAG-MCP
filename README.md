@@ -156,7 +156,7 @@ docker build -t llama-rag-mcp:latest .
 docker tag llama-rag-mcp:latest default-route-openshift-image-registry.apps-crc.testing/my-project/llama-rag-mcp:latest
 docker push default-route-openshift-image-registry.apps-crc.testing/my-project/llama-rag-mcp:latest
 ```
-#### Build MCP Server Dokcer Image found in this repo https://github.com/kgalal88/SpringAI-MCP-Server
+#### Build & Push MCP Server Containr Image found in this repo https://github.com/kgalal88/SpringAI-MCP-Server
 ```bash
 docker build -t chat-mcp-server:latest .
 docker tag chat-mcp-server:latest default-route-openshift-image-registry.apps-crc.testing/my-project/chat-mcp-server:latest
