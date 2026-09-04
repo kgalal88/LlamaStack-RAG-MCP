@@ -19,14 +19,3 @@ vector_store = client.vector_stores.create(
 )
 
 print(f"Vector Store ID: {vector_store.id}")
-
-# # Ask questions with file search
-# response = client.responses.create(
-#     model="vllm/Qwen/Qwen3-4B",
-#     input="Who is Khalid?",
-#     tools=[{
-#         "type": "file_search",
-#         "vector_store_ids": [vector_store.id],
-#     }],
-# )
-# print(response.output_text)
