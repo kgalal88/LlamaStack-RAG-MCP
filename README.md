@@ -144,6 +144,7 @@ Detailed workflow for deploying to Red Hat OpenShift (CRC / CodeReady Containers
 ```bash
 # Expose OpenShift internal image registry route
 oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"spec":{"defaultRoute":true}}'
+oc get route default-route -n openshift-image-registry
 
 # Login to OpenShift Image Registry
 docker login -u developer -p $(oc whoami -t) default-route-openshift-image-registry.apps-crc.testing
