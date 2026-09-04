@@ -82,4 +82,3 @@ oc -n kserve apply -f ai\llama-stack\k8s\vllm-qwen3-isvc.yaml
 oc -n kserve apply -f ai\llama-stack\k8s\vllm-qwen3-runtime-3b.yaml
 oc -n kserve apply -f ai\llama-stack\k8s\vllm-qwen3-isvc-3b.yaml
 
-oc -n kserve apply -f ai\llama-stack\k8s\llm-d.yaml
