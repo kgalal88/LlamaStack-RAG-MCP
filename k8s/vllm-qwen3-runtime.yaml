@@ -1,0 +1,30 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+metadata:
+  name: vllm-qwen3-runtime
+  namespace: kserve
+spec:
+  supportedModelFormats:
+    - name: vllm
+      version: "1"
+      autoSelect: true
+  containers:
+    - name: kserve-container
+      image: ollama/ollama:latest
+      command: ["/bin/sh", "-c"]
+      args:
+        - "ollama serve & sleep 3 && ollama pull qwen2.5:0.5b && wait"
+      env:
+        - name: HOME
+          value: "/tmp"
+        - name: OLLAMA_HOST
+          value: "0.0.0.0:8080"
+      ports:
+        - containerPort: 8080
+          protocol: TCP
+      volumeMounts:
+        - mountPath: /tmp
+          name: tmp-volume
+  volumes:
+    - name: tmp-volume
+      emptyDir: {}

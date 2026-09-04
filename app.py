@@ -8,6 +8,7 @@ from openai import OpenAI
 from pydantic import BaseModel, Field
 import uvicorn
 
+MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8081/sse")
 BASE_URL = os.getenv("LLAMA_STACK_BASE_URL", "http://localhost:8321/v1")
 API_KEY = os.getenv("LLAMA_STACK_API_KEY", "fake")
 TIMEOUT_SECONDS = float(os.getenv("LLAMA_STACK_TIMEOUT_SECONDS", "60"))
@@ -109,6 +110,61 @@ async def get_weather_info(payload: WeatherRequest) -> WeatherResponse:
             },
             "required": ["location"],
         },
+    }]
+
+    try:
+        # Step 1: Request tool execution from model
+        initial_response = client.responses.create(
+            model=payload.model,
+            input=payload.prompt,
+            tools=tools,
+        )
+
+        # Step 2: Extract function call outputs
+        function_outputs = []
+        for item in getattr(initial_response, "output", []):
+            if item.type == "function_call":
+                args = json.loads(item.arguments)
+                location = args.get("location", "")
+                tool_result = mock_get_weather(location)
+
+                function_outputs.append({
+                    "type": "function_call_output",
+                    "call_id": item.call_id,
+                    "output": tool_result,
+                })
+
+        # Step 3: Pass FULL conversation history back to the model
+        if function_outputs:
+            conversation_input = [
+                {"role": "user", "content": payload.prompt},
+            ]
+            
+            # Append output items from the initial response
+            for item in getattr(initial_response, "output", []):
+                conversation_input.append(item)
+                
+            # Append function execution results
+            conversation_input.extend(function_outputs)
+
+            final_response = client.responses.create(
+                model=payload.model,
+                input=conversation_input,
+                tools=tools,
+            )
+            return WeatherResponse(model=payload.model, response=final_response.output_text)
+
+        return WeatherResponse(model=payload.model, response=initial_response.output_text)
+
+    except Exception as exc:  # pragma: no cover
+        raise HTTPException(status_code=502, detail=f"Weather request failed: {exc}") from exc
+
+@app.post("/ask_mcp", response_model=WeatherResponse)
+async def get_mcp(payload: WeatherRequest) -> WeatherResponse:
+    tools = [{
+        "type": "mcp",
+        "server_url": MCP_SERVER_URL,
+        "server_label": "mcp-server",
     }]
 
     try:

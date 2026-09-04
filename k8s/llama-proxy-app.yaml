@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama-proxy-app
+  labels:
+    app: llama-proxy-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llama-proxy-app
+  template:
+    metadata:
+      labels:
+        app: llama-proxy-app
+    spec:
+      containers:
+      - name: llama-proxy-app
+        # Update this image path if pushing to internal registry or Docker Hub
+        image: image-registry.openshift-image-registry.svc:5000/my-project/llama-rag-mcp:latest2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8001
+          name: http
+        env:
+        # Route internal cluster requests to the ogx-starter service on port 8321
+        - name: MCP_SERVER_URL
+          value: "http://mcp-server-service:8081/sse"
+        - name: LLAMA_STACK_BASE_URL
+          value: "http://ogx-service:8321/v1"
+        - name: LLAMA_STACK_API_KEY
+          value: "fake"
+        - name: LLAMA_STACK_TIMEOUT_SECONDS
+          value: "60"
+        - name: PORT
+          value: "8001"
+        - name: UVICORN_RELOAD
+          value: "false"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llama-proxy-service
+  labels:
+    app: llama-proxy-app
+spec:
+  selector:
+    app: llama-proxy-app
+  ports:
+    - protocol: TCP
+      port: 8001
+      targetPort: 8001
+  type: ClusterIP
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: llama-proxy-route
+  labels:
+    app: llama-proxy-app
+  annotations:
+    # Sets HAProxy gateway timeout to 10 minutes (600s / 10m / 1h)
+    haproxy.router.openshift.io/timeout: 10m
+spec:
+  to:
+    kind: Service
+    name: llama-proxy-service
+  port:
+    targetPort: 8001

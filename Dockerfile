@@ -2,9 +2,11 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PORT=8001
+ENV LLAMA_STACK_BASE_URL=http://localhost:8321/v1 \
+    LLAMA_STACK_API_KEY=fake \
+    LLAMA_STACK_TIMEOUT_SECONDS=60 \
+    PORT=8001 \
+    UVICORN_RELOAD=false
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir --upgrade pip \

@@ -1,7 +1,10 @@
 import httpx
 from openai import OpenAI
 
-client = OpenAI(base_url="http://localhost:8321/v1", api_key="fake", http_client=httpx.Client(verify=False))
+#BASE_URL = "http://localhost:8321/v1"
+BASE_URL = "http://ogx-route-my-project.apps-crc.testing/v1"
+
+client = OpenAI(base_url=BASE_URL, api_key="fake", http_client=httpx.Client(verify=False))
 
 # Upload a document
 file = client.files.create(

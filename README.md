@@ -7,7 +7,7 @@ This project exposes a FastAPI application that talks to a Llama Stack service.
 Build and run the app with Docker Compose:
 
 ```bash
-docker compose up --build
+docker build -t llama-rag-mcp:latest .
 ```
 
 The API will be available at `http://localhost:8001`.
