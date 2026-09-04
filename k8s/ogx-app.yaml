@@ -40,7 +40,7 @@ spec:
           #value: "http://vllm-qwen3-0-6b-predictor.kserve.svc.cluster.local/v1"
           #value: "http://vllm-qwen3-3b-predictor.kserve.svc.cluster.local/v1"
         - name: HF_TOKEN
-          value: "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"
+          value: ""
         - name: HOME
           value: "/tmp"
         resources:
