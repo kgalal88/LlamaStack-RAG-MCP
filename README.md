@@ -41,10 +41,6 @@ This project provides an API layer designed to bridge client applications with a
 ├── Dockerfile               # Production Docker container definition for the API
 ├── requirements.txt         # Python dependencies (FastAPI, uvicorn, openai, httpx)
 ├── rag.py                   # Script for document uploading & vector store creation
-├── query_vector_store.py    # Script to list & inspect vector stores and files
-├── tools.py                 # Standalone script demonstrating OpenAI-compatible function calling
-├── test.py                  # Quick smoke-test script for Llama Stack inference
-├── cmd.txt                  # Comprehensive execution commands for Docker, vLLM, and OpenShift
 └── README.md                # Project documentation
 ```
 
@@ -243,9 +239,6 @@ Routes requests through an MCP (Model Context Protocol) tool server via SSE URL.
 ## 🛠 Utility & Testing Scripts
 
 - **`rag.py`**: Uploads documents (e.g. PDFs) to Llama Stack and creates a vector store index.
-- **`query_vector_store.py`**: Lists active vector stores, retrieved details, and indexed files.
-- **`tools.py`**: A standalone sample executing 2-pass function calling with the OpenAI Chat Completions endpoint.
-- **`test.py`**: Basic sanity script to query `vllm/Qwen/Qwen3-4B`.
 
 ---
 
