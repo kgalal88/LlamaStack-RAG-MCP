@@ -167,17 +167,16 @@ docker push default-route-openshift-image-registry.apps-crc.testing/my-project/c
 
 ### 3. Apply Kubernetes Manifests
 ```bash
-# Apply App Manifests
-oc -n my-project apply -f k8s/llama-proxy-app.yaml
-oc -n my-project apply -f k8s/mcp-server.yaml
-oc -n my-project apply -f k8s/ogx-app.yaml
-
 # Setup KServe & Cert-Manager
 oc apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml
 oc apply -f k8s/kserve.yaml
 
 # Deploy vLLM InferenceServices
 oc  -n kserve apply -f D:\materials\RHOCP\ai\llama-stack\k8s\vllm-host-proxy.yaml
+# Apply App Manifests
+oc -n my-project apply -f k8s/ogx-app.yaml
+oc -n my-project apply -f k8s/llama-proxy-app.yaml
+oc -n my-project apply -f k8s/mcp-server.yaml
 ```
 
 ---
