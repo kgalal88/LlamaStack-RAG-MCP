@@ -17,7 +17,7 @@ spec:
       containers:
       - name: llama-proxy-app
         # Update this image path if pushing to internal registry or Docker Hub
-        image: image-registry.openshift-image-registry.svc:5000/my-project/llama-rag-mcp:latest2
+        image: image-registry.openshift-image-registry.svc:5000/my-project/llama-rag-mcp:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8001
