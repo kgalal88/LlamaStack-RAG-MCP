@@ -175,8 +175,8 @@ oc apply -f k8s/kserve.yaml
 oc  -n kserve apply -f D:\materials\RHOCP\ai\llama-stack\k8s\vllm-host-proxy.yaml
 # Apply App Manifests
 oc -n my-project apply -f k8s/ogx-app.yaml
-oc -n my-project apply -f k8s/llama-proxy-app.yaml
 oc -n my-project apply -f k8s/mcp-server.yaml
+oc -n my-project apply -f k8s/llama-proxy-app.yaml
 ```
 
 ---
