@@ -295,3 +295,16 @@ Performs dynamic function calling to fetch weather data for a queried location.
 | `MCP_SERVER_URL` | `http://localhost:8081/sse` | Endpoint URL for the MCP Server |
 | `PORT` | `8001` | Application port |
 | `UVICORN_RELOAD` | `false` | Enable hot-reload for local development |
+
+---
+
+## 🚀 Related Medium Article
+https://medium.com/@khalid.mtwaly/building-enterprise-ai-agents-integrating-llama-stack-rag-and-mcp-on-openshift-530edd882634
+
+---
+
+## 👤 Author
+
+**Khalid Galal**
+
+**https://www.linkedin.com/in/khalidgalal**
