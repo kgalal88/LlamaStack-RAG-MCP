@@ -174,9 +174,8 @@ oc -n my-project apply -f k8s/ogx-app.yaml
 oc apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.1/cert-manager.yaml
 oc apply -f k8s/kserve.yaml
 
-# Deploy vLLM Runtime & InferenceServices
-oc -n kserve apply -f k8s/vllm-qwen3-runtime.yaml
-oc -n kserve apply -f k8s/vllm-qwen3-isvc.yaml
+# Deploy vLLM InferenceServices
+oc  -n kserve apply -f D:\materials\RHOCP\ai\llama-stack\k8s\vllm-host-proxy.yaml
 ```
 
 ---
