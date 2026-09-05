@@ -31,7 +31,7 @@ This project provides an API layer designed to bridge client applications with a
 - **MCP Support**: Ready for Server-Sent Events (SSE) based Model Context Protocol tool integrations.
 - **Enterprise OpenShift Ready**: Deployment scripts and instructions for OpenShift image registries, Routes, KServe InferenceServices, and cert-manager integration.
 
-<img width="8192" height="3638" alt="MCP Server Interaction Flow-2026-09-05-012449" src="https://github.com/user-attachments/assets/f39d038e-b371-4b71-b590-c45b54dd7755" />
+<img width="8192" height="5681" alt="RAG Document Ingestion-2026-09-05-104722" src="https://github.com/user-attachments/assets/52c30e5e-cb15-47a5-a274-2e0a8307a56a" />
 
 ---
 
